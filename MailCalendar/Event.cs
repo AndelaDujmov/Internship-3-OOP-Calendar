@@ -8,14 +8,24 @@ namespace MailCalendar.Classes
         public string Location { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public List<Person> Emails { get;  set; }
+        public List<Person> Emails { get; private set; }
 
         public Event(int id)
         {
             this.ID = id;
         }
-        
 
+        public void SetEventEmails(List<Person> emails)
+        {
+            this.Emails = emails;
+
+            for (int i = 0; i < this.Emails.Count; i++)
+            {
+                this.Emails[i].presence = new Dictionary<int, bool>();
+                this.Emails[i].presence.Add(this.ID, true);
+            }
+        }
+    
         public void PrintActiveEvents()
         {
 
@@ -35,7 +45,8 @@ namespace MailCalendar.Classes
             {
                 if (var.Email.Equals(email))
                 {
-                    var.presence.Add(id, false);
+                    var.presence.Clear();
+                    var.presence.Add(id, false); 
                 }
             }
         }
@@ -52,8 +63,20 @@ namespace MailCalendar.Classes
                 
         }
 
-       
+        public void FinishedEvents()
+        {
 
+            var timeSpan = Math.Round(this.EndDate.Subtract(this.StartDate).TotalHours, 1);
+            
+            if (this.EndDate < DateTime.Now)
+            {
+                Console.WriteLine($"ID: {this.ID}\nEvent name: {this.Name}\nEvent location: {this.Location}\nEnded: {DateTime.Now.Subtract(this.EndDate).Days} days ago\nLasted: {timeSpan} hours\n");
+                Console.WriteLine("The list of guests:");
+                this.Emails.ForEach(person => Console.WriteLine($"{person.Email}, "));
+                Console.WriteLine("\n");   
+            }
+        }
 
+      
     }
 }

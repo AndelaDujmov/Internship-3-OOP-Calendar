@@ -52,41 +52,58 @@ class Program
             FirstName = "Mara"
         });
         
-        EventList.Add(new Event(1)
+        var event1 = new Event(1)
         {
-            Emails = new List<Person>(){PersonList[1], PersonList[0]},
             EndDate = DateTime.Now.AddDays(27),
             Location = "Split",
             StartDate = DateTime.Now.AddDays(-12),
             Name = "Programiranje u Javi"
-        });
+        };
         
-        EventList.Add(new Event(2)
+      
+        
+        var event2 = new Event(2)
         {
-            Emails = new List<Person>(){PersonList[2], PersonList[3]},
-            EndDate = DateTime.Now.AddDays(67),
+            EndDate = DateTime.Now.AddDays(-1),
             Location = "Split",
-            StartDate = DateTime.Now.AddDays(-2),
+            StartDate = DateTime.Now.AddDays(-24),
             Name = "Programiranje u C#"
-        });
+        };
         
-        EventList.Add(new Event(3)
+        var event3 = new Event(3)
         {
-            Emails = new List<Person>(){PersonList[4], PersonList[5]},
             EndDate = DateTime.Now.AddDays(123),
             Location = "Split",
             StartDate = DateTime.Now.AddDays(12),
             Name = "Programiranje u Kotlinu"
-        });
-        EventList.Add(new Event(4)
+        };
+        
+        var event4 = new Event(4)
         {
-            Emails = new List<Person>(){PersonList[6]},
             EndDate = DateTime.Now.AddDays(13),
             Location = "Zagreb",
             StartDate = DateTime.Now.AddDays(5),
             Name = "Uvod u robotiku"
-        });
-
+        };
+        
+        var event5 = new Event(5)
+        {
+            EndDate = DateTime.Now.AddDays(-3),
+            Location = "Varaždin",
+            StartDate = DateTime.Now.AddDays(-15),
+            Name = "Uvod u Njemački jezik"
+        };
+        event1.SetEventEmails(new List<Person>(){ PersonList[0], PersonList[2]});
+        EventList.Add(event1);
+        event2.SetEventEmails(new List<Person>(){ PersonList[1], PersonList[3]});
+        EventList.Add(event2);
+        event3.SetEventEmails(new List<Person>(){ PersonList[4], PersonList[5]});
+        EventList.Add(event3);
+        event4.SetEventEmails(new List<Person>(){ PersonList[6], PersonList[7]});
+        EventList.Add(event4);
+        event5.SetEventEmails(new List<Person>(){PersonList[8], PersonList[9]});
+        EventList.Add(event5);
+        
         MainMenu();
         
         void MainMenu()
@@ -119,6 +136,7 @@ class Program
                 case 'c':
                     Console.Clear();
                     Console.WriteLine("Izabrali ste opciju Završeni eventi");
+                    EventList.ForEach(even => even.FinishedEvents());
                     break;
                 case 'd':
                     Console.Clear();
