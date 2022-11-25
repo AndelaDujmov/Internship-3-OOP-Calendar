@@ -279,27 +279,22 @@ class Program
             Console.WriteLine("Unesite email osobe koja ce prisustvovati eventu!");
             var email = Console.ReadLine();
 
-            if(!FindPersonByEmail(email))
-                Console.WriteLine("Email ne postoji u sustavu!");
+            if(!TryCheckIfEmailIsValid(email))
+                Console.WriteLine("Email nije validan!");
             else
-                Console.WriteLine("Email je pronadjen u sustavu!");
+                Console.WriteLine("Email je validan!");
             
             var eventCreated = new Event(name, location, start, end);
 
             
 
             var ans = "";
-
         }
-        
-        bool FindPersonByEmail(string email)
-        {
-            foreach (var person in PersonList)
-            {
-                if (person.Email.Equals(email))
-                    return true;
-            }
 
+        bool TryCheckIfEmailIsValid(string email)
+        {
+            if (email.Contains("@gmail.com"))
+                return true;
             return false;
         }
         
