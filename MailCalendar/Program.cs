@@ -141,6 +141,11 @@ class Program
                 case 'd':
                     Console.Clear();
                     Console.WriteLine("Izabrali ste opciju Kreiraj event");
+                    Console.WriteLine("Želite li kreirati novi element? y/n");
+                    var nas = Console.ReadLine();
+                    
+                    if(nas is "y")
+                        CreateEvent();
                     break;
                 case '0':
                     Console.WriteLine("Izabrali ste opciju Izlaz iz programa");
@@ -164,7 +169,10 @@ class Program
             {
                 Console.Clear();
                 Console.WriteLine("Odabrali ste opciju zabilježavanja neprisutnosti osobe!");
-                EventList.ForEach(even => even.NoteAbsents(even.ID, "marijana.relja@gmail.com"));
+                Console.WriteLine("Unesite mail osobe koja neće biti prisutna:");
+                var email = Console.ReadLine();
+                EventList.ForEach(even => even.NoteAbsents(even.ID, email));
+                MainMenu();
             }
             else if(ans.Equals('0')){
                 Console.Clear();
@@ -194,10 +202,25 @@ class Program
                 case 'b':
                     Console.Clear();
                     Console.WriteLine("Odabrali ste opciju uklanjanja osobe s eventa!");
-                   
+                    Console.WriteLine("Unesite email osobe koju biste izbrisali iz eventa!");
+                    var email = Console.ReadLine();
+                    var flag = 0;
+                    
+                    foreach (var events in EventList)
+                    {
+                        if(CheckIfPersonExistsInEventList(email, events))
+                        {
+                            events.RemovePersonFromEvent(events.ID, email);
+                            flag = 1;
+                        }
+                    }
+                    
+                    if(flag is 0) Console.WriteLine("Person you searched for does not exist on the event list");
+                    MainMenu();
                     break;
                 case '0':
                     Console.Clear();
+                    MainMenu();
                     break;
             }
             
@@ -211,14 +234,76 @@ class Program
             {
                 if (EventList[i].ID.Equals(id))
                 {
-                    EventList.Remove(EventList[i]);
-                    Console.WriteLine("Event uspješno izbrisan!");
-                    flag = 1;
+                    if (EventList[i].EndDate < DateTime.Now)
+                    {
+                        flag = 1;
+                        Console.WriteLine($"Event {EventList[i].Name} je završen te se ne može izbrisati!");
+                    }
+                    else
+                    {
+                        EventList[i].Emails.ForEach(eve => eve.presence.Clear());
+                        EventList.Remove(EventList[i]);
+                        Console.WriteLine("Event uspješno izbrisan!");
+                        flag = 1;
+                    }
                 }
             }
-            
             if(flag is 0)
                 Console.WriteLine("Event ne postoji!");
         }
+
+
+        bool CheckIfPersonExistsInEventList(string email, Event eve)
+        {
+            foreach (var per in eve.Emails)
+            {
+                if (per.Email.Equals(email))
+                    return true;
+               
+            }
+            return false;
+        }
+
+        void CreateEvent()
+        {
+            Console.WriteLine("Unesite naziv eventa!");
+            var name = Console.ReadLine();
+            Console.WriteLine("Unesite lokaciju eventa!");
+            var location = Console.ReadLine();
+            Console.WriteLine("Unesite datum početka eventa u formatu YYYY-MM-DD!");
+            var start = new DateTime();
+            DateTime.TryParse(Console.ReadLine(), out start);
+            Console.WriteLine("Unesite datum završetka eventa u formatu YYYY-MM-DD!");
+            var end = new DateTime();
+            DateTime.TryParse(Console.ReadLine(), out end);
+            Console.WriteLine("Unesite email osobe koja ce prisustvovati eventu!");
+            var email = Console.ReadLine();
+
+            if(!FindPersonByEmail(email))
+                Console.WriteLine("Email ne postoji u sustavu!");
+            else
+                Console.WriteLine("Email je pronadjen u sustavu!");
+            
+            var eventCreated = new Event(name, location, start, end);
+
+            
+
+            var ans = "";
+
+        }
+        
+        bool FindPersonByEmail(string email)
+        {
+            foreach (var person in PersonList)
+            {
+                if (person.Email.Equals(email))
+                    return true;
+            }
+
+            return false;
+        }
+        
     }
+
+    
 }

@@ -13,7 +13,6 @@ namespace MailCalendar.Classes
             this.LastName = lastName;
             this.Email = email;
         }
-        
     }
     
     
