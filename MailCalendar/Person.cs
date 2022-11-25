@@ -5,7 +5,7 @@ namespace MailCalendar.Classes
     {
         public string FirstName { get; set; }
         public string LastName { get; }
-        public string Email { get;  }
+        public string Email { get; }
         public Dictionary<int, bool> presence { get; set; }
 
         public Person(string lastName, string email)
@@ -13,6 +13,8 @@ namespace MailCalendar.Classes
             this.LastName = lastName;
             this.Email = email;
         }
+
+        public Person(){}
     }
     
     

@@ -150,7 +150,18 @@ namespace MailCalendar.Classes
                 Console.WriteLine("\n");
             }
         }
-        
-        //napravit metodu koja će NAĆ osobu čiji je email jednak onom koji je upisan
+
+        public Person FindPersonAndCheckWhetherAvailable(string email)
+        {
+            foreach (var person in this.Emails)
+            {
+                if (person.Email.Equals(email))
+                {
+                    return person;
+                }
+            }
+
+            return null;
+        }
     }
 }

@@ -5,7 +5,7 @@ class Program
     static void Main(string[] args)
     {
         
-        var emails = new System.Collections.Generic.List<string>(){ "renata.jelic@gmail.com", "marijana.jelic@gmail.com" };
+        var emails = new List<string>(){ "renata.jelic@gmail.com", "marijana.jelic@gmail.com" };
         var PersonList = new List<Person>();
         var EventList = new List<Event>();
 
@@ -123,14 +123,14 @@ class Program
             {
                 case 'a':
                     Console.Clear();
-                    Console.WriteLine("Izabrali ste opciju Aktivni eventi");
+                    Console.WriteLine("Izabrali ste opciju Aktivni eventi"); //napraviti opciju da korisnik može kreirati novog korisnika
                     EventList.ForEach(even => even.PrintActiveEvents());
                     SubmenuA();
                     break;
                 case 'b':
                     Console.Clear();
                     Console.WriteLine("Izabrali ste opciju Nadolazeći eventi");
-                    EventList.ForEach(even => even.UpcommingEvents());
+                    EventList.ForEach(even => even.UpcommingEvents()); // eventualno staviti tu za neki submenu!!!!!!!!!!!!!!11
                     SubmenuB();
                     break;
                 case 'c':
@@ -143,11 +143,10 @@ class Program
                     Console.WriteLine("Izabrali ste opciju Kreiraj event");
                     Console.WriteLine("Želite li kreirati novi element? y/n");
                     var nas = Console.ReadLine();
-                    
                     if(nas is "y")
                         CreateEvent();
                     break;
-                case '0':
+                case '0': 
                     Console.WriteLine("Izabrali ste opciju Izlaz iz programa");
                     break;
                 default:
@@ -223,7 +222,6 @@ class Program
                     MainMenu();
                     break;
             }
-            
         }
         
         void DeleteEvent(int id)
@@ -276,29 +274,68 @@ class Program
             Console.WriteLine("Unesite datum završetka eventa u formatu YYYY-MM-DD!");
             var end = new DateTime();
             DateTime.TryParse(Console.ReadLine(), out end);
-            Console.WriteLine("Unesite email osobe koja ce prisustvovati eventu!");
-            var email = Console.ReadLine();
 
-            if(!TryCheckIfEmailIsValid(email))
-                Console.WriteLine("Email nije validan!");
-            else
-                Console.WriteLine("Email je validan!");
-            
             var eventCreated = new Event(name, location, start, end);
+            var listEmails = new List<Person>();
+            string email = null;
+            while (email != "q")
+            {
+                Console.WriteLine("Unesite emailove osoba koje želite dodati u event!");
+                Console.WriteLine("U slučaju da ste dodali potreban broj osoba stisnite q");
+                email = Console.ReadLine();
 
-            
+                if (!TryCheckIfEmailIsValid(email))
+                {
+                    Console.WriteLine("Email nije validan!");
+                    continue;
+                }
 
-            var ans = "";
+                else
+                {
+                    Console.WriteLine("Email je validan!");
+                    var person = new Person();
+
+                    EventList.ForEach(eveent =>
+                    {
+                        person = eveent.FindPersonAndCheckWhetherAvailable(email);
+                        if (person is not null)
+                            Console.WriteLine($"{person.FirstName} {person.LastName}");
+                    });
+                    
+                    if (!CheckWhetherPersonAvailable(person))
+                    {
+                        Console.WriteLine("Nemoguće dodati na event osobu koja sudjeluje u drugom eventu!");
+                        continue;
+                    }
+                    else
+                        listEmails.Add(person);
+                }
+            }
+            eventCreated.SetEventEmails(listEmails);
+            Console.WriteLine($"event {eventCreated.Name} uspješno kreiran na datum {eventCreated.StartDate.DayOfWeek}, {eventCreated.StartDate.ToShortDateString()}");
+        }
+
+        bool CheckWhetherPersonAvailable(Person person)
+        {
+            foreach (var eve in EventList)
+            {
+                if (eve.Emails.Contains(person))
+                {
+                    if (eve.EndDate > DateTime.Now)
+                        return false;
+                    else
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         bool TryCheckIfEmailIsValid(string email)
         {
-            if (email.Contains("@gmail.com"))
+            if (email.Contains("@") && email.Contains(".com"))
                 return true;
             return false;
         }
-        
     }
-
-    
 }
