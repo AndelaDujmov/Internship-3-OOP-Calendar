@@ -3,44 +3,34 @@ namespace MailCalendar.Classes
 
     public class Event
     {
-        public int ID { get; }
+        public Guid ID { get; }
         public string Name { get; set; }
         public string Location { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public List<Person> Emails { get; private set; }
 
-        public Event(int id)
+        public Event()
         {
-            this.ID = id;
+            this.ID = Guid.NewGuid();
         }
 
         public Event(string name, string location, DateTime start, DateTime end)
         {
+            this.ID = new Guid();
             this.Name = name;
             this.Location = location;
             this.StartDate = start;
             this.EndDate = end;
         }
-
         
-        /*
-        private Event(string name, string location, DateTime start, DateTime end, List<Person> persons)
-        {
-            this.Name = name;
-            this.Location = location;
-            this.StartDate = start;
-            this.EndDate = end;
-            this.Emails = persons;
-        }
-        */
         public void SetEventEmails(List<Person> emails)
         {
             this.Emails = emails;
 
             for (int i = 0; i < this.Emails.Count; i++)
             {
-                this.Emails[i].presence = new Dictionary<int, bool>();
+                this.Emails[i].presence = new Dictionary<Guid, bool>();
                 this.Emails[i].presence.Add(this.ID, true);
             }
         }
@@ -59,7 +49,7 @@ namespace MailCalendar.Classes
 
         }
 
-        public void NoteAbsents(int id, string email)
+        public void NoteAbsents(string email)
         {
             foreach (var var in this.Emails)
             {
@@ -71,7 +61,7 @@ namespace MailCalendar.Classes
                     {
                         case "y":
                             var.presence.Clear();
-                            var.presence.Add(id, false);
+                            var.presence.Add(this.ID, false);
                             Console.WriteLine("Neprisutnost označena!");
                             break;
                         case "n":
@@ -85,7 +75,7 @@ namespace MailCalendar.Classes
             }
         }
 
-        public void RemovePersonFromEvent(int id, string email)
+        public void RemovePersonFromEvent(string email)
         {
 
             for (var i = 0; i < this.Emails.Count; i++)

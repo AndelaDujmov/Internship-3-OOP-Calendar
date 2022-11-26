@@ -52,7 +52,7 @@ class Program
             FirstName = "Mara"
         });
         
-        var event1 = new Event(1)
+        var event1 = new Event()
         {
             EndDate = DateTime.Now.AddDays(27),
             Location = "Split",
@@ -62,7 +62,7 @@ class Program
         
       
         
-        var event2 = new Event(2)
+        var event2 = new Event()
         {
             EndDate = DateTime.Now.AddDays(-1),
             Location = "Split",
@@ -70,7 +70,7 @@ class Program
             Name = "Programiranje u C#"
         };
         
-        var event3 = new Event(3)
+        var event3 = new Event()
         {
             EndDate = DateTime.Now.AddDays(123),
             Location = "Split",
@@ -78,7 +78,7 @@ class Program
             Name = "Programiranje u Kotlinu"
         };
         
-        var event4 = new Event(4)
+        var event4 = new Event()
         {
             EndDate = DateTime.Now.AddDays(13),
             Location = "Zagreb",
@@ -86,7 +86,7 @@ class Program
             Name = "Uvod u robotiku"
         };
         
-        var event5 = new Event(5)
+        var event5 = new Event()
         {
             EndDate = DateTime.Now.AddDays(-3),
             Location = "Varaždin",
@@ -130,7 +130,7 @@ class Program
                 case 'b':
                     Console.Clear();
                     Console.WriteLine("Izabrali ste opciju Nadolazeći eventi");
-                    EventList.ForEach(even => even.UpcommingEvents()); // eventualno staviti tu za neki submenu!!!!!!!!!!!!!!11
+                    EventList.ForEach(even => even.UpcommingEvents()); 
                     SubmenuB();
                     break;
                 case 'c':
@@ -170,7 +170,7 @@ class Program
                 Console.WriteLine("Odabrali ste opciju zabilježavanja neprisutnosti osobe!");
                 Console.WriteLine("Unesite mail osobe koja neće biti prisutna:");
                 var email = Console.ReadLine();
-                EventList.ForEach(even => even.NoteAbsents(even.ID, email));
+                EventList.ForEach(even => even.NoteAbsents(email));
                 MainMenu();
             }
             else if(ans.Equals('0')){
@@ -194,9 +194,9 @@ class Program
                     Console.Clear();
                     Console.WriteLine("Odabrali ste opciju brisanja eventa!");
                     Console.WriteLine("Unesite broj eventa kojeg zelite izbrisati!");
-                    var broj = 0;
-                    int.TryParse(Console.ReadLine(), out broj);
-                    DeleteEvent(broj);
+                    var broj = Console.ReadLine();
+                    var id = new Guid(broj);
+                    DeleteEvent(id);
                     break;
                 case 'b':
                     Console.Clear();
@@ -209,7 +209,7 @@ class Program
                     {
                         if(CheckIfPersonExistsInEventList(email, events))
                         {
-                            events.RemovePersonFromEvent(events.ID, email);
+                            events.RemovePersonFromEvent(email);
                             flag = 1;
                         }
                     }
@@ -224,7 +224,7 @@ class Program
             }
         }
         
-        void DeleteEvent(int id)
+        void DeleteEvent(Guid id)
         {
             var flag = 0;
 
@@ -313,6 +313,7 @@ class Program
             }
             eventCreated.SetEventEmails(listEmails);
             Console.WriteLine($"event {eventCreated.Name} uspješno kreiran na datum {eventCreated.StartDate.DayOfWeek}, {eventCreated.StartDate.ToShortDateString()}");
+            EventList.Add(eventCreated);
         }
 
         bool CheckWhetherPersonAvailable(Person person)
